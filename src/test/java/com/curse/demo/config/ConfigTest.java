@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import com.curse.demo.models.Category;
 import com.curse.demo.models.Order;
 import com.curse.demo.models.OrderItem;
+import com.curse.demo.models.Payment;
 import com.curse.demo.models.Product;
 import com.curse.demo.models.User;
 import com.curse.demo.models.enums.OrderStatus;
@@ -62,18 +63,21 @@ public class ConfigTest {
         p4.getCategories().add(cat3);
         p5.getCategories().add(cat3);
 
-
         OrderItem or1 = new OrderItem(o1,p1,2,p1.getPrice());
         OrderItem or2 = new OrderItem(o1,p2,2,p2.getPrice());
         OrderItem or3 = new OrderItem(o2,p3,2,p3.getPrice());
         OrderItem or4 = new OrderItem(o3,p4,2,p4.getPrice());
         OrderItem or5 = new OrderItem(o3,p5,2,p5.getPrice());
         
+        Payment pay1 = new Payment(null,Instant.now(),o1);
+        o1.setPayment(pay1);
+
         userRepository.saveAll(Arrays.asList(u1,u2));
         orderRepository.saveAll(Arrays.asList(o1,o2,o3));
         categoryRepository.saveAll(Arrays.asList(cat1,cat2,cat3));
         productRepository.saveAll(Arrays.asList(p1,p2,p3,p4,p5));
         orderItemRepository.saveAll(Arrays.asList(or1,or2,or3,or4,or5));
+
 
     }
 
