@@ -7,7 +7,6 @@ import java.util.Set;
 
 import com.curse.demo.models.enums.OrderStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -43,7 +42,6 @@ public class Order implements Serializable{
     private User client;
 
     @OneToMany(mappedBy="id.order")
-    @JsonIgnore
     private Set<OrderItem> items = new HashSet<>();
 
     @OneToOne(mappedBy="order",cascade=CascadeType.ALL)
@@ -52,10 +50,11 @@ public class Order implements Serializable{
     public Order() {
     }
 
+    @SuppressWarnings("OverridableMethodCallInConstructor")
     public Order(Long id, Instant moment, OrderStatus orderStatus, User client) {
         this.id = id;
         this.moment = moment;
-        this.orderStatus = orderStatus;
+        this.setOrderStatus(orderStatus);
         this.client = client;
     }
 
@@ -76,11 +75,13 @@ public class Order implements Serializable{
     }
 
     public OrderStatus getOrderStatus() {
-        return orderStatus;
+        return OrderStatus.valueOf(orderStatus.toString());
     }
 
     public void setOrderStatus(OrderStatus orderStatus) {
+        if(orderStatus != null){
         this.orderStatus = orderStatus;
+        }
     }
 
     public User getClient() {
@@ -93,7 +94,6 @@ public class Order implements Serializable{
     public Set<OrderItem> getItems(){
         return items;
     }
-    
 
     public Payment getPayment() {
         return payment;
@@ -103,6 +103,14 @@ public class Order implements Serializable{
         this.payment = payment;
     }
 
+    public Double getTotal(){
+        double sum = 0.0;
+        for(OrderItem oi : items){
+            sum += oi.getSubTotal();
+        }
+
+        return sum;
+    }
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -126,6 +134,10 @@ public class Order implements Serializable{
         } else if (!id.equals(other.id))
             return false;
         return true;
+    }
+
+    public void setItems(Set<OrderItem> items) {
+        this.items = items;
     }
 
     
