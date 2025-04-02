@@ -12,6 +12,8 @@ import com.curse.demo.repositories.UserRepository;
 import com.curse.demo.services.exceptions.DatabaseException;
 import com.curse.demo.services.exceptions.ResourceNotFoundException;
 
+import jakarta.persistence.EntityNotFoundException;
+
 @Service
 public class UserService {
 
@@ -39,12 +41,16 @@ public class UserService {
         
     }
     public User update(Long id, User obj){
-
+        try{
         User entity = userRepository.getReferenceById(id);
         entity.setName(obj.getName());
         entity.setEmail(obj.getEmail());
         entity.setFone(obj.getFone());
 
         return userRepository.save(entity);
+        }catch(EntityNotFoundException e){
+            throw  new ResourceNotFoundException(id);
+        }
+        
     }
 }
